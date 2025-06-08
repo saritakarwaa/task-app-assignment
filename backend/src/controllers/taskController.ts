@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import pool from "../config/db";
+import axios from "axios"
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
@@ -27,6 +28,7 @@ export const addTask = async (req: Request, res: Response) => {
     });
   }
   try {
+    
     const result = await pool.query(
       "INSERT INTO tasks (title, description, status) VALUES ($1, $2, $3) RETURNING *",
       [title, description, status]
@@ -52,5 +54,29 @@ export const deleteTask = async (req: Request, res: Response) => {
     res.json({ message: "Task deleted" });
   } catch (err) {
     res.status(500).json({ error: "Failed to delete task" });
+  }
+};
+
+export const searchTasks = async (req: Request, res: Response) => {
+  const { query } = req.body;
+
+  try {
+    const { data } = await axios.post("http://localhost:5000/embedding", { text: query });
+    const embedding = data.embedding;
+
+    const result = await pool.query(
+      `SELECT id, title, description, status,
+         1 - (embedding <=> $1::vector) AS similarity
+       FROM tasks
+       WHERE embedding IS NOT NULL
+       ORDER BY embedding <=> $1::vector
+       LIMIT 3`,
+      [embedding]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Search error:", err);
+    res.status(500).json({ error: "Vector search failed" });
   }
 };
