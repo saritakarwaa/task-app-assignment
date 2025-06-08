@@ -28,10 +28,11 @@ export const addTask = async (req: Request, res: Response) => {
     });
   }
   try {
-    
+     const { data } = await axios.post("http://localhost:5000/embedding", { text: description });
+    const embedding = data.embedding;
     const result = await pool.query(
       "INSERT INTO tasks (title, description, status) VALUES ($1, $2, $3) RETURNING *",
-      [title, description, status]
+      [title, description, status,embedding]
     );
     res.json(result.rows[0]);
   } catch (err) {

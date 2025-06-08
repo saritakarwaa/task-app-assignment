@@ -2,7 +2,7 @@
 import './App.css'
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
-
+import TaskSearch from './components/TaskSearch';
 function App() {
 
   return (
@@ -11,6 +11,7 @@ function App() {
         <h1 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-gray-100">
           Task Manager
         </h1>
+        <TaskSearch />
         <TaskForm onTaskAdded={() => window.location.reload()} />
         <TaskList />
       </div>
