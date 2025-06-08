@@ -54,7 +54,7 @@ A full-stack task manager that allows users to create, read, delete, and semanti
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/your-username/task-vector-app.git
+   git clone https://github.com/saritkarwaa/task-app-assignment.git
    cd task-vector-app
 2. Add environment variables
 Create a .env file in backend: see the .env.example file 
@@ -63,29 +63,21 @@ docker compose up --build
 
 
 🔎 Vector Search (Task Similarity)
+
 🧠 How it works
 Description of each task is converted into a 384-dimensional vector using Sentence Transformers.
-
 Vectors are stored in PostgreSQL using pgvector.
-
 When a user searches, the query is also embedded and compared with stored vectors using cosine similarity.
 
 🐍 Python Embedding Service
 Example (used in backend or as microservice):
-
-python
-Copy
-Edit
 from sentence_transformers import SentenceTransformer
-
 model = SentenceTransformer('all-MiniLM-L6-v2')
-
 def get_embedding(text: str):
     return model.encode(text).tolist()
+
+
 🧪 Sample SQL for Vector Search
-sql
-Copy
-Edit
 SELECT id, title, description, status
 FROM tasks
 ORDER BY embedding <-> '[query_embedding_here]'
